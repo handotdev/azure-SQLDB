@@ -1,0 +1,23 @@
+{
+  "name": "azure-SQLDB",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanywang2/azure-SQLDB.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hanywang2/azure-SQLDB/issues"
+  },
+  "homepage": "https://github.com/hanywang2/azure-SQLDB#readme",
+  "dependencies": {
+    "mssql": "^5.1.0"
+  }
+}
