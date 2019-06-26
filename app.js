@@ -57,7 +57,7 @@ const getData = () => {
 }
 getData();
 
-app.get('/api/v1/data', (req, res) => {
+app.get('/v1/data', (req, res) => {
     res.status(200).send({
         success: status,
         message: message,
