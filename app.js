@@ -1,9 +1,11 @@
 //Import the mssql package
-const sql = require("mssql");
+const sql = require('mssql');
 const express = require('express');
+const cors = require('cors');
 
 //Set up express app
 const app = express();
+app.use(cors());
 
 var dbConfig = {
     server: "foodful.database.windows.net",
@@ -17,6 +19,8 @@ var dbConfig = {
     }
 };
 
+let status = false;
+let message = 'data not loaded';
 let dataSet = [];
 
 const getData = () => {
@@ -30,18 +34,22 @@ const getData = () => {
 
             req.query("SELECT * FROM test")
             .then(function(recordset) {
+                status = true;
+                message = 'data retrieved successfully';
                 dataSet = recordset;
                 conn.close();
             })
             //SQL statement execution error
             .catch(function(err) {
-                console.log(err);
+                status = false;
+                message = 'sql statement error'
                 conn.close();
             })
         })
         //Connection error
         .catch(function(err) {
-            console.log(err);
+            status = false;
+            message = 'connection error'
             conn.close()
         });
         getData();
@@ -51,11 +59,10 @@ getData();
 
 app.get('/api/v1/data', (req, res) => {
     res.status(200).send({
-        success: true,
-        message: 'data retrieved successfully',
+        success: status,
+        message: message,
         data: dataSet
     })
-    console.log(dataSet);
 });
 
 const PORT = 5000;
