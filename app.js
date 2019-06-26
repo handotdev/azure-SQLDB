@@ -50,6 +50,7 @@ const getData = () => {
         .catch(function(err) {
             status = false;
             message = 'connection error'
+            console.log(err);
             conn.close()
         });
         getData();
