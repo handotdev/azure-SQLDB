@@ -65,7 +65,7 @@ app.get('/v1/data', (req, res) => {
     })
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`)
 });
