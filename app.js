@@ -42,16 +42,15 @@ const getData = () => {
             //SQL statement execution error
             .catch(function(err) {
                 status = false;
-                message = 'sql statement error'
+                message = 'sql statement error';
                 conn.close();
             })
         })
         //Connection error
         .catch(function(err) {
             status = false;
-            message = 'connection error'
-            console.log(err);
-            conn.close()
+            message = 'connection error';
+            conn.close();
         });
         getData();
     }, 1000)
