@@ -80,7 +80,7 @@ app.get('/v1/sorted', (req, res) => {
 
 app.get('/v1/login', (req, res) => {
 
-    let username = req.query.username;
+    let email = req.query.email;
     let password = req.query.password;
 
     sql.connect(dbConfig).then(() => {
@@ -93,7 +93,7 @@ app.get('/v1/login', (req, res) => {
         for(let i = 0; i < users.length; i++) {
 
             let user = users[i];
-            if (user.Email === username && user.Password === password) {
+            if (user.Email === email && user.Password === password) {
                 auth = true;
                 break;
             }
