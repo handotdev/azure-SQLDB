@@ -43,6 +43,7 @@ const getData = () => {
             .catch(function(err) {
                 status = false;
                 message = 'sql statement error';
+                console.log(err);
                 conn.close();
             })
         })
@@ -50,6 +51,7 @@ const getData = () => {
         .catch(function(err) {
             status = false;
             message = 'connection error';
+            console.log(err);
             conn.close();
         });
         getData();
