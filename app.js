@@ -1,11 +1,15 @@
-//Import the mssql package
+// Import modules
 const sql = require('mssql');
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 
-//Set up express app
+// Set up express app
 const app = express();
 app.use(cors());
+
+// Bcrypt settings
+const saltRounds = 10;
 
 var dbConfig = {
     server: "foodful.database.windows.net",
@@ -21,7 +25,7 @@ var dbConfig = {
 
 app.get('/v1/data', (req, res) => {
     sql.connect(dbConfig).then(() => {
-        return sql.query`select * from test`
+        return sql.query`SELECT * FROM test`
     }).then(result => {
         res.status(200).send({
             success: true,
@@ -93,9 +97,8 @@ app.get('/v1/login', (req, res) => {
         for(let i = 0; i < users.length; i++) {
 
             let user = users[i];
-            if (user.Email === email && user.Password === password) {
+            if (user.Email === email && bcrypt.compareSync(password, user.Password)) {
                 auth = true;
-                break;
             }
         }
 
@@ -122,6 +125,25 @@ app.get('/v1/login', (req, res) => {
         console.log(err);
         sql.close();
     })
+});
+
+app.post('/v1/register', (req, res) => {
+    let email = req.query.email;
+    let password = req.query.password;
+
+    let farmID = 'test';
+
+    bcrypt.hash(password, saltRounds, function(err, hash) {
+        sql.connect(dbConfig).then(() => {
+            return sql.query`INSERT INTO users VALUES (${email}, ${hash}, ${farmID})`
+        }).then(result => {
+            console.log(result);
+            sql.close();
+        }).catch(err => {
+            console.log(err);
+            sql.close();
+        })
+    });
 });
 
 const PORT = process.env.PORT || 5000;
