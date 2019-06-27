@@ -19,90 +19,62 @@ var dbConfig = {
     }
 };
 
-// Raw Data
-let status = false;
-let message = 'data not loaded';
-let dataSet = [];
-
-// Sorted Data
-let sortedStatus = false;
-let sortedMessage = 'sorted data not loaded';
-let sortedDataSet = [];
-
-// Login
-let login = false;
-let usersData = [];
-
-const getData = () => {
-    setTimeout(function () {
-        var conn = new sql.ConnectionPool(dbConfig);
-
-        conn.connect()
-
-        .then(function() {
-            var req = new sql.Request(conn);
-
-            req.query("SELECT * FROM test")
-                .then(function(recordset) {
-                    status = true;
-                    message = 'data retrieved successfully';
-                    dataSet = recordset;
-                    conn.close();
-                })
-                // SQL statement execution error
-                .catch(function(err) {
-                    console.log(err);
-                    conn.close();
-                });
-            req.query("SELECT * FROM users")
-                .then(function(usersset) {
-                    login = true;
-                    usersData = usersset;
-                    conn.close();
-                })
-                .catch(function(err) {
-                    console.log(err);
-                    conn.close();
-                });
-            req.query("SELECT * FROM sortedDB_test")
-                .then(function(sortedset) {
-                    sortedStatus = true;
-                    sortedMessage = 'sorted data retrieved successfully';
-                    sortedDataSet = sortedset;
-                    conn.close();
-                })
-                .catch(function(err) {
-                    console.log(err);
-                    conn.close();
-                });
-        })
-        //Connection error
-        .catch(function(err) {
-            status = false;
-            message = 'connection error';
-            console.log(err);
-            conn.close();
-        });
-        getData();
-    }, 1000)
-}
-
-getData();
-
 app.get('/v1/data', (req, res) => {
-    
-    res.status(200).send({
-        success: status,
-        message: message,
-        data: dataSet
+    sql.connect(dbConfig).then(() => {
+        return sql.query`select * from test`
+    }).then(result => {
+        res.status(200).send({
+            success: true,
+            message: 'data retrieved successfully',
+            data: result
+        })
+        sql.close();
+    }).catch(err => {
+        res.status(200).send({
+            success: false,
+            message: 'error'
+        })
+        console.log(err);
+        sql.close();
+    })
+
+    sql.on('error', err => {
+        res.status(200).send({
+            success: false,
+            message: 'connection error'
+        })
+        console.log(err);
+        sql.close();
     })
 });
 
 app.get('/v1/sorted', (req, res) => {
-    res.status(200).send({
-        success: sortedStatus,
-        message: sortedMessage,
-        data: sortedDataSet
+    sql.connect(dbConfig).then(() => {
+        return sql.query`select * from sortedDB_test`
+    }).then(result => {
+        res.status(200).send({
+            success: true,
+            message: 'sorted data retrieved successfully',
+            data: result
+        })
+        sql.close();
+
+    }).catch(err => {
+        res.status(200).send({
+            success: false,
+            message: 'error'
+        })
+        console.log(err);
+        sql.close();
+    })
+
+    sql.on('error', err => {
+        res.status(200).send({
+            success: false,
+            message: 'connection error'
+        })
+        console.log(err);
+        sql.close();
     })
 });
 
@@ -111,22 +83,44 @@ app.get('/v1/login', (req, res) => {
     let username = req.query.username;
     let password = req.query.password;
 
-    let users = usersData.recordset;
+    sql.connect(dbConfig).then(() => {
+        return sql.query`select * from users`
+    }).then(result => {
 
-    for(let i = 0; i < users.length; i++) {
+        let users = result.recordset;
+        let auth = false;
 
-        let user = users[i];
+        for(let i = 0; i < users.length; i++) {
 
-        if (user.Email === username && user.Password === password) {
-            res.status(200).send({
-                success: true
-            });
-            break;
+            let user = users[i];
+            if (user.Email === username && user.Password === password) {
+                auth = true;
+                break;
+            }
         }
-    }
 
-    res.status(200).send({
-        success: false
+        res.status(200).send({
+            success: auth
+        })
+
+        sql.close();
+        
+    }).catch(err => {
+        res.status(200).send({
+            success: false,
+            message: 'error'
+        })
+        console.log(err);
+        sql.close();
+    })
+
+    sql.on('error', err => {
+        res.status(200).send({
+            success: false,
+            message: 'connection error'
+        })
+        console.log(err);
+        sql.close();
     })
 });
 
