@@ -19,9 +19,19 @@ var dbConfig = {
     }
 };
 
+// Raw Data
 let status = false;
 let message = 'data not loaded';
 let dataSet = [];
+
+// Sorted Data
+let sortedStatus = false;
+let sortedMessage = 'sorted data not loaded';
+let sortedDataSet = [];
+
+// Login
+let login = false;
+let usersData = [];
 
 const getData = () => {
     setTimeout(function () {
@@ -33,19 +43,38 @@ const getData = () => {
             var req = new sql.Request(conn);
 
             req.query("SELECT * FROM test")
-            .then(function(recordset) {
-                status = true;
-                message = 'data retrieved successfully';
-                dataSet = recordset;
-                conn.close();
-            })
-            //SQL statement execution error
-            .catch(function(err) {
-                status = false;
-                message = 'sql statement error';
-                console.log(err);
-                conn.close();
-            })
+                .then(function(recordset) {
+                    status = true;
+                    message = 'data retrieved successfully';
+                    dataSet = recordset;
+                    conn.close();
+                })
+                // SQL statement execution error
+                .catch(function(err) {
+                    console.log(err);
+                    conn.close();
+                });
+            req.query("SELECT * FROM users")
+                .then(function(usersset) {
+                    login = true;
+                    usersData = usersset;
+                    conn.close();
+                })
+                .catch(function(err) {
+                    console.log(err);
+                    conn.close();
+                });
+            req.query("SELECT * FROM sortedDB_test")
+                .then(function(sortedset) {
+                    sortedStatus = true;
+                    sortedMessage = 'sorted data retrieved successfully';
+                    sortedDataSet = sortedset;
+                    conn.close();
+                })
+                .catch(function(err) {
+                    console.log(err);
+                    conn.close();
+                });
         })
         //Connection error
         .catch(function(err) {
@@ -57,13 +86,47 @@ const getData = () => {
         getData();
     }, 1000)
 }
+
 getData();
 
 app.get('/v1/data', (req, res) => {
+    
     res.status(200).send({
         success: status,
         message: message,
         data: dataSet
+    })
+});
+
+app.get('/v1/sorted', (req, res) => {
+    res.status(200).send({
+        success: sortedStatus,
+        message: sortedMessage,
+        data: sortedDataSet
+    })
+});
+
+app.get('/v1/login', (req, res) => {
+
+    let username = req.query.username;
+    let password = req.query.password;
+
+    let users = usersData.recordset;
+
+    for(let i = 0; i < users.length; i++) {
+
+        let user = users[i];
+
+        if (user.Email === username && user.Password === password) {
+            res.status(200).send({
+                success: true
+            });
+            break;
+        }
+    }
+
+    res.status(200).send({
+        success: false
     })
 });
 
