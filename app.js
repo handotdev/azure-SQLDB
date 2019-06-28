@@ -94,16 +94,20 @@ app.get('/v1/login', (req, res) => {
         let users = result.recordset;
         let auth = false;
 
+        let userData = null;
+
         for(let i = 0; i < users.length; i++) {
 
             let user = users[i];
             if (user.Email === email && bcrypt.compareSync(password, user.Password)) {
                 auth = true;
+                userData = user;
             }
         }
 
         res.status(200).send({
-            success: auth
+            success: auth,
+            user: userData
         })
 
         sql.close();
@@ -128,6 +132,7 @@ app.get('/v1/login', (req, res) => {
 });
 
 app.post('/v1/register', (req, res) => {
+    let name = req.query.name;
     let email = req.query.email;
     let password = req.query.password;
 
@@ -135,7 +140,7 @@ app.post('/v1/register', (req, res) => {
 
     bcrypt.hash(password, saltRounds, function(err, hash) {
         sql.connect(dbConfig).then(() => {
-            return sql.query`INSERT INTO users VALUES (${email}, ${hash}, ${farmID})`
+            return sql.query`INSERT INTO users VALUES (${email}, ${hash}, ${farmID}, ${name})`
         }).then(result => {
             console.log(result);
             sql.close();
