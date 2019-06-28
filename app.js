@@ -3,7 +3,7 @@ const sql = require('mssql');
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
 // Set up express app
 const app = express();
@@ -11,6 +11,9 @@ app.use(cors());
 
 // Bcrypt settings
 const saltRounds = 10;
+
+// Email settings
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 var dbConfig = {
     server: "foodful.database.windows.net",
@@ -155,28 +158,14 @@ app.post('/email', (req, res) => {
     let msg = req.query.msg;
 
     if (msg) {
-        var transporter = nodemailer.createTransport({
-            service: "Gmail",
-            auth: {
-              user: 'dairyx2050@gmail.com',
-              pass: 'DreamTeam2019'
-            }
-          });
-          
-          var mailOptions = {
-            from: 'dairyx2050@gmail.com',
+        const email = {
             to: 'han@foodful.farm',
-            subject: 'Sign Up From Website',
-            html: msg
+            from: 'signup@foodful.farm',
+            subject: 'Sign Up (from website)!',
+            html: `${msg}`,
           };
-          
-          transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-              console.log(error);
-            } else {
-              console.log('Email sent: ' + info.response);
-            }
-          });
+        sgMail.send(email)
+          .then((console.log('email sent')) => {}).catch(()=> {console.log('email failed')});
     }
 });
 
