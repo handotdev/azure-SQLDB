@@ -165,7 +165,7 @@ app.post('/email', (req, res) => {
             html: `${msg}`,
           };
         sgMail.send(email)
-          .then((console.log('email sent')) => {}).catch(()=> {console.log('email failed')});
+          .then(() => {console.log('email sent')}).catch(()=> {console.log('email failed')});
     }
 });
 
