@@ -3,6 +3,7 @@ const sql = require('mssql');
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const sgMail = require('@sendgrid/mail');
 
 // Set up express app
 const app = express();
@@ -10,6 +11,9 @@ app.use(cors());
 
 // Bcrypt settings
 const saltRounds = 10;
+
+// Email settings
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 var dbConfig = {
     server: "foodful.database.windows.net",
@@ -109,7 +113,6 @@ app.get('/v1/login', (req, res) => {
             success: auth,
             user: userData
         })
-
         sql.close();
         
     }).catch(err => {
@@ -149,6 +152,21 @@ app.post('/v1/register', (req, res) => {
             sql.close();
         })
     });
+});
+
+app.post('/email', (req, res) => {
+    let msg = req.query.text;
+
+    if (msg.length > 0 && msg != null) {
+        const email = {
+            to: 'han@foodful.farm',
+            from: 'signup@foodful.farm',
+            subject: 'Sign Up (from website)!',
+            html: `${msg}`,
+          };
+        sgMail.send(email)
+          .then(() => {}).catch(()=> {console.log('email failed')});
+    }
 });
 
 const PORT = process.env.PORT || 5000;
