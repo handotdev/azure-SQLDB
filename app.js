@@ -8,6 +8,7 @@ const sgMail = require('@sendgrid/mail');
 // Set up express app
 const app = express();
 app.use(cors());
+app.options('*', cors());
 
 // Bcrypt settings
 const saltRounds = 10;
