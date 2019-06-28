@@ -161,7 +161,7 @@ app.post('/email', (req, res) => {
         const email = {
             to: 'han@foodful.farm',
             from: 'signup@foodful.farm',
-            subject: 'Sign Up (from website)!',
+            subject: 'Website Sign Up',
             html: `${msg}`,
           };
         sgMail.send(email)
