@@ -8,7 +8,6 @@ const sgMail = require('@sendgrid/mail');
 // Set up express app
 const app = express();
 app.use(cors());
-app.options('*', cors());
 
 // Bcrypt settings
 const saltRounds = 10;
@@ -156,7 +155,7 @@ app.post('/v1/register', (req, res) => {
 });
 
 app.post('/email', (req, res) => {
-    let msg = req.query.msg;
+    let msg = req.body.msg;
 
     if (msg) {
         const email = {
