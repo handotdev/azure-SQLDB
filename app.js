@@ -13,7 +13,7 @@ app.use(cors());
 const saltRounds = 10;
 
 // Email settings
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+sgMail.setApiKey('SG.-S_BbBRMRLyyIkjGFQQqwg.L_NHq1UU1ZcBBnJJie9LbgZymyNSbhSJJURLwoGXdJs');
 
 var dbConfig = {
     server: "foodful.database.windows.net",
