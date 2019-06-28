@@ -158,13 +158,13 @@ app.post('/email', (req, res) => {
         var transporter = nodemailer.createTransport({
             service: "Gmail",
             auth: {
-              user: 'DairyX2050@gmail.com',
+              user: 'dairyx2050@gmail.com',
               pass: 'DreamTeam2019'
             }
           });
           
           var mailOptions = {
-            from: 'DairyX2050@gmail.com',
+            from: 'dairyx2050@gmail.com',
             to: 'han@foodful.farm',
             subject: 'Sign Up From Website',
             html: msg
