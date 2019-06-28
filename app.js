@@ -155,9 +155,9 @@ app.post('/v1/register', (req, res) => {
 });
 
 app.post('/email', (req, res) => {
-    let msg = req.query.text;
+    let msg = req.query.msg;
 
-    if (msg.length > 0 && msg != null) {
+    if (msg) {
         const email = {
             to: 'han@foodful.farm',
             from: 'signup@foodful.farm',
