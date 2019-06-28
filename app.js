@@ -1,6 +1,7 @@
 // Import modules
 const sql = require('mssql');
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const sgMail = require('@sendgrid/mail');
@@ -8,12 +9,14 @@ const sgMail = require('@sendgrid/mail');
 // Set up express app
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
 
 // Bcrypt settings
 const saltRounds = 10;
 
 // Email settings
 sgMail.setApiKey('SG.-S_BbBRMRLyyIkjGFQQqwg.L_NHq1UU1ZcBBnJJie9LbgZymyNSbhSJJURLwoGXdJs');
+
 
 var dbConfig = {
     server: "foodful.database.windows.net",
