@@ -95,21 +95,16 @@ app.get('/v1/login', (req, res) => {
     let password = req.query.password;
 
     sql.connect(dbConfig).then(() => {
-        return sql.query`select * from users`
+        return sql.query`SELECT * FROM users WHERE Email=${email}`
     }).then(result => {
 
-        let users = result.recordset;
         let auth = false;
-
         let userData = null;
 
-        for(let i = 0; i < users.length; i++) {
-
-            let user = users[i];
-            if (user.Email === email && bcrypt.compareSync(password, user.Password)) {
-                auth = true;
-                userData = user;
-            }
+        if (result.recordset.length > 0 && bcrypt.compareSync(password, result.recordset[0].Password)) {
+            auth = true;
+            let user = result.recordset[0];
+            userData = user;
         }
 
         res.status(200).send({
